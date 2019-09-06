@@ -5,3 +5,4 @@ config
 .vscode/
 *.theia
 *.env
+*.tess
