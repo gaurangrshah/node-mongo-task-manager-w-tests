@@ -22,7 +22,7 @@ const userTwo = {
   name: 'Tim',
   email: 'tim@email.com',
   password: 'Computer098',
-  tokens: [{ // generate and assign token to user's tokens array:
+  tokens: [{
     token: jwt.sign({ _id: userTwoId }, process.env.JWT_SECRET)
   }]
 }

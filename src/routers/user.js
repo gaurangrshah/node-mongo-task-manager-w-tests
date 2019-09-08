@@ -75,10 +75,10 @@ router.post('/users/logoutAll', auth, async (req, res) => {
   }
 })
 
-// // fetch all users:
+
 // fetch current user's profile
 router.get('/users/me', auth, async (req, res) => {
-  // this function only runs if the user is authenticated
+  // this function only runs if the user is authenticated via 'auth' middlware
   res.send(req.user) // return authenticated user's profile.
 })
 
@@ -121,8 +121,6 @@ router.delete('/users/me/', auth, async (req, res) => {
 
 // setup upload with multer options:
 const upload = multer({ // define options for multer:
-  // removed in favor of passing the item to callback from route.
-  // dest: 'avatars', // folder name that triggers this context.
   limits: {
     fileSize: 1000000, // limits filesize to 1mb
   },
@@ -140,9 +138,6 @@ const upload = multer({ // define options for multer:
 // setup endpoint to allow upload of images using multer middlware:
 router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
 
-  // instantiate sharp to run when the buffer is not full
-  // const buffer = await sharp(req.file.buffer).png().toBuffer()
-  // specify where to find the image and set it's format.
   console.log('convert & resize:')
   const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
   console.log('converted & resized', buffer)
@@ -153,14 +148,14 @@ router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) 
   //  save profile pic to user profile:
   await req.user.save()
   console.log('saved')
-  // upload.single middleware exposed from multer
+
   res.send()
 }, (error, req, res, next) => { // callback error handler
   res.status(400).send({ error: error.message })
 })
 
 
-// emoves entire user instead of just removing the profile image
+// ❌❌ ERROR? removes entire user instead of just removing the profile image
 // delete profile image endpoint:
 router.delete('/users/me/avatar', auth, async (req, res) => {
   // removes profile pic

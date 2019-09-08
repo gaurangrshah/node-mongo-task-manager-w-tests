@@ -1,7 +1,7 @@
 const request = require('supertest')
-const app = require('../src/app') // imports app logic.
+const app = require('../src/app') // loads app logic.
 const Task = require('../src/models/task')
-const {
+const { // loads dummy db setup
   userOneId,
   userOne,
   userTwoId,

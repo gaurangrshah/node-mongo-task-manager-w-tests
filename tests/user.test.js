@@ -1,57 +1,25 @@
-// tests all user related functionality:
-const request = require('supertest')
-
-// // Refactored into fixtures/db.js
-// const jwt = require('jsonwebtoken')
-// const mongoose = require('mongoose')
-
-const app = require('../src/app') // imports app logic.
-const User = require('../src/models/user') // imports User model
+const request = require('supertest') // allows requests without server
+const app = require('../src/app') // imports app logic / no server.
+const User = require('../src/models/user')
 const { userOneId, userOne, setupDatabase } = require('./fixtures/db')
-
-// // Refactored into task.test.js
-// const userOneId = new mongoose.Types.ObjectId() // generate ObjectID
-
-
-// const userOne = {
-//   _id: userOneId,
-//   name: 'Mike',
-//   email: 'mike@email.com',
-//   password: 'Computer098',
-//   tokens: [{ // generate and assign token to user's tokens array:
-//     token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET)
-//   }]
-// }
-
-
-
-// beforeEach(async () => {
-//   // await User.deleteMany()
-//   // // console.log('cleared users')
-//   // await new User(userOne).save()
-//   // // console.log('saved new user')
-// })
 
 beforeEach(setupDatabase)
 
 
 test('Should signup a new user', async () => {
   // using supertest to test the POST method to the /users endpoint
-  const response = await request(app).post('/users').send({ //store as response
-    // the .send() method is what allows us to send data across the wire
+  const response = await request(app).post('/users').send({
     name: 'Test',
     email: 'test@email.com',
     password: 'Computer098'
-  }).expect(201) // if sucessful, should return 201
+  }).expect(201)
 
   // Assert that the database gets updated with new user correctly
   const user = await User.findById(response.body.user._id)
-  // check if user is !null, means a matching user was found:
-  expect(user).not.toBeNull()
-  // ".not" flips the expectation to the opposite of '.tobeNull()'
+  expect(user).not.toBeNull() // user !== null
+
 
   // Assertions about the response body:
-  // expect(response.body.user.name).toBe('Test User')
   expect(response.body).toMatchObject({
     user: {
       name: 'Test',
@@ -125,13 +93,11 @@ test('Should upload avatar image', async () => {
     .post('/users/me/avatar')
     .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
     .attach('avatar', 'tests/fixtures/profile-pic.jpg')
-    // attach allows to attach a file to the request.
     .expect(200)
 
   // Assert that image is saved as buffer to user profile:
   const user = await User.findById(userOneId)
   expect(user.avatar).toEqual(expect.any(Buffer))
-  // '.toEqual()' is used when checking equality of objects
 })
 
 
