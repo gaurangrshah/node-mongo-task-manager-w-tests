@@ -1,31 +1,38 @@
 // tests all user related functionality:
 const request = require('supertest')
-const jwt = require('jsonwebtoken')
-const mongoose = require('mongoose')
+
+// // Refactored into fixtures/db.js
+// const jwt = require('jsonwebtoken')
+// const mongoose = require('mongoose')
+
 const app = require('../src/app') // imports app logic.
 const User = require('../src/models/user') // imports User model
+const { userOneId, userOne, setupDatabase } = require('./fixtures/db')
+
+// // Refactored into task.test.js
+// const userOneId = new mongoose.Types.ObjectId() // generate ObjectID
 
 
-const userOneId = new mongoose.Types.ObjectId() // generate ObjectID
+// const userOne = {
+//   _id: userOneId,
+//   name: 'Mike',
+//   email: 'mike@email.com',
+//   password: 'Computer098',
+//   tokens: [{ // generate and assign token to user's tokens array:
+//     token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET)
+//   }]
+// }
 
 
-const userOne = {
-  _id: userOneId,
-  name: 'Mike',
-  email: 'mike@email.com',
-  password: 'Computer098',
-  tokens: [{ // generate and assign token to user's tokens array:
-    token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET)
-  }]
-}
 
+// beforeEach(async () => {
+//   // await User.deleteMany()
+//   // // console.log('cleared users')
+//   // await new User(userOne).save()
+//   // // console.log('saved new user')
+// })
 
-beforeEach(async () => {
-  await User.deleteMany()
-  // console.log('cleared users')
-  await new User(userOne).save()
-  // console.log('saved new user')
-})
+beforeEach(setupDatabase)
 
 
 test('Should signup a new user', async () => {
