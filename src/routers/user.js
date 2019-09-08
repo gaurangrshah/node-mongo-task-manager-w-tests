@@ -2,6 +2,7 @@ const express = require('express') // allows us to instantiate a new router
 const multer = require('multer') // middleware for uploads
 const sharp = require('sharp') // used for processing images
 const User = require('../models/user') // requires the user model
+
 // require middleware for authentication
 const auth = require('../middleware/auth')
 const { sendWelcomeEmail, sendCancelEmail } = require('../emails/account')
@@ -25,7 +26,7 @@ router.post('/users', async (req, res) => {
 
     res.status(201).send(user) // sets status code & informs user
   } catch (e) {
-    res.status(400).send(e.message) // sets status code & informs user
+    res.status(400).send() // sets status code & informs user
   }
 
 })
@@ -36,10 +37,11 @@ router.post('/users/login', async (req, res) => {
     // verify user with custom defined method on user model: findByCredentials
     const user = await User.findByCredentials(req.body.email, req.body.password)
     const token = await user.generateAuthToken() // generates authentication
+    // console.log(user, token)
     res.send({ user, token })
   } catch (e) {
     console.log(e)
-    res.status(400).send({ error: 'please try again' })
+    res.status(400).send(e.message)
   }
 })
 
@@ -96,7 +98,7 @@ router.patch('/users/me', auth, async (req, res) => {
     updates.forEach((update) => req.user[update] = req.body[update])
     // use array values to dynamically populate each property that is being updated
     await req.user.save() //executes middleware
-    res.send(req.user, userTasks)
+    res.send(req.user)
   } catch (e) {
     // console.log(e.message)
     res.status(400).send(e)

@@ -24,7 +24,7 @@ const auth = async (req, res, next) => {
     req.token = token
     // create a user property on request to provide route handler with access to user
     req.user = user
-    console.log(req.token, req.user)
+    // console.log(req.token, req.user)
     next() // run route handler if user is authenticated
 
   } catch (e) {
